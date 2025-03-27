@@ -119,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void getQuestionFromFirestore() {
-        // Récupère le document "7WyY0brE6BKfvDThSuf1" de la collection "Quiz"
+        // Récupère le document "7WyY0brE6bBKfvDThSuf1" de la collection "Quiz"
         db.collection("Quiz")
                 .document("7WyY0brE6BKfvDThSuf1")
                 .get()
