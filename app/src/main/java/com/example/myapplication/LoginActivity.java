@@ -20,7 +20,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -60,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // Bouton Connexion
-        loginButton.setOnClickListener(view -> loginUser());
+        loginButton.setOnClickListener(view -> registerUser());
 
         // Bouton Inscription
         signupButton.setOnClickListener(view -> registerUser());
@@ -68,49 +70,57 @@ public class LoginActivity extends AppCompatActivity {
         // Récupérer et afficher la question1 depuis Firestore
         getQuestionFromFirestore();
     }
+    private String generateRandomCode() {
+        Random random = new Random();
+        int code = random.nextInt(1000000);  // Code entre 0 et 999999
+        return String.format("%06d", code);  // Formater pour avoir 6 chiffres, par exemple
+    }
+    private void saveCodeAndStateToFirestore(String randomCode) {
+        // Créer un tableau avec le code aléatoire à la position [0] et l'état "en attente" à la position [1]
+        List<String> partieData = Arrays.asList(randomCode, "en attente");
 
-    private void loginUser() {
-        String email = emailEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
-
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, "Connexion réussie", Toast.LENGTH_SHORT).show();
-                        goToMainActivity();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Échec de la connexion", Toast.LENGTH_SHORT).show();
-                    }
+        // Mettre à jour le champ "Partie_1" dans le document "Partie_en_cours" de la collection "Partie"
+        db.collection("Partie")
+                .document("Partie_en_cours")
+                .update("Partie_1", partieData)  // Mise à jour du champ "Partie_1" avec le tableau
+                .addOnSuccessListener(aVoid -> {
+                    // Succès de l'écriture
+                    Toast.makeText(LoginActivity.this, "Code et état enregistrés avec succès", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    // Erreur lors de l'écriture
+                    Toast.makeText(LoginActivity.this, "Erreur lors de l'enregistrement", Toast.LENGTH_SHORT).show();
                 });
     }
+
 
     private void registerUser() {
-        String email = emailEditText.getText().toString().trim();
+        String user = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
+        db.collection("Users")
+                .document("Users")
+                .get()
+                .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        User newUser = new User(email);
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            String Num_utilisateur = document.getString("Num_utilisateur");
+                            String Mdp_utilisateur = document.getString("Mdp_utilisateur");
 
-                        Toast.makeText(LoginActivity.this, "Inscription réussie", Toast.LENGTH_SHORT).show();
-                        goToMainActivity();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Échec de l'inscription", Toast.LENGTH_SHORT).show();
+                            if (user.equals(Num_utilisateur) && password.equals(Mdp_utilisateur)) {
+
+                                String randomCode = generateRandomCode();
+                                saveCodeAndStateToFirestore(randomCode);
+
+                            } else {
+                                Toast.makeText(this, "Utilisateur non reconue", Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
                 });
     }
+
 
     private void goToMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
