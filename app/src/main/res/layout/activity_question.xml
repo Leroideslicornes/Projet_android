@@ -11,7 +11,7 @@
 			android:id="@+id/editText"
 			android:layout_width="match_parent"
 			android:layout_height="179dp"
-			android:hint="@string/enter_text_here"/>
+			android:hint="enter_text_here"/>
 
 	<RadioGroup
 			android:id="@+id/radioGroup"
