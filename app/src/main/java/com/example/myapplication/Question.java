@@ -1,34 +1,48 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
-public class Question extends AppCompatActivity {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
+public class Question extends Fragment {
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_question);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_question, container, false);
 
-        // Exemple de texte statique pour la question et les réponses
-        String questionText = "Quelle est la capitale de la France ?";
-        String option1 = "Paris";
-        String option2 = "Londres";
-        String option3 = "Berlin";
-        String option4 = "Madrid";
+        RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
+        EditText editText = view.findViewById(R.id.editText);
 
-        // Mettre à jour les TextView avec les valeurs
-        TextView questionTextView = findViewById(R.id.question_text);
-        TextView option1TextView = findViewById(R.id.option1_text);
-        TextView option2TextView = findViewById(R.id.option2_text);
-        TextView option3TextView = findViewById(R.id.option3_text);
-        TextView option4TextView = findViewById(R.id.option4_text);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // Handle radio button selection
+                switch (checkedId) {
+                    case R.id.radioButton1:
+                        Toast.makeText(getActivity(), "Option 1 selected", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.radioButton2:
+                        Toast.makeText(getActivity(), "Option 2 selected", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.radioButton3:
+                        Toast.makeText(getActivity(), "Option 3 selected", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.radioButton4:
+                        Toast.makeText(getActivity(), "Option 4 selected", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
 
-        questionTextView.setText(questionText);
-        option1TextView.setText(option1);
-        option2TextView.setText(option2);
-        option3TextView.setText(option3);
-        option4TextView.setText(option4);
+        return view;
     }
 }
