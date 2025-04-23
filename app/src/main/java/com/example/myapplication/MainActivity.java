@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         // Récupérer les boutons par leur ID
         Button joinGameButton = findViewById(R.id.button_join_game);
         Button createGameButton = findViewById(R.id.button_create_game);
+        Button Debug_Pierre = findViewById(R.id.button_debug_Pierre);
+
 
         // Définir les actions à effectuer lors des clics sur les boutons
         joinGameButton.setOnClickListener(new View.OnClickListener() {
@@ -47,6 +49,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Lancer LoginActivity lorsque le bouton "Créer une partie" est cliqué
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+        Debug_Pierre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Lancer LoginActivity lorsque le bouton "Créer une partie" est cliqué
+                Intent intent = new Intent(MainActivity.this, Classement.class);
                 startActivity(intent);
             }
         });
