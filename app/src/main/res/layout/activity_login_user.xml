@@ -1,23 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+              android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:padding="20dp">
+              android:padding="24dp">
 
     <EditText
-            android:id="@+id/edit_text"
+            android:id="@+id/editPseudo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Code partie"
-            android:inputType="number|numberDecimal"/>
+            android:hint="Ton pseudo" />
 
-
+    <EditText
+            android:id="@+id/editRoomCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Code de la salle (ex: ABC123)" />
 
     <Button
-            android:id="@+id/loginButton"
+            android:id="@+id/btnJoin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="rejoindre une partie" />
+            android:text="Rejoindre la salle" />
 
 </LinearLayout>
