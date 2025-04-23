@@ -57,7 +57,7 @@ public class RejoindrePartie extends AppCompatActivity {
                             Object etatPartie = partieList.get(1);
                             if (codePartie != null && etatPartie != null &&
                                     codePartie.toString().equals(code) &&
-                                    etatPartie.toString().equalsIgnoreCase("Partie en cours")) {
+                                    etatPartie.toString().equalsIgnoreCase("en attente")) {
 
                                 codeTrouve = true;
                                 break;
