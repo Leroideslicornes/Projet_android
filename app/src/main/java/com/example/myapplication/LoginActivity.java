@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToMainWaitingRoom() {
-        Intent intent = new Intent(LoginActivity.this, WaitingRoom.class);
+        Intent intent = new Intent(LoginActivity.this, com.example.myapplication.WaitingRoom.class);
         startActivity(intent);
         finish();
     }
