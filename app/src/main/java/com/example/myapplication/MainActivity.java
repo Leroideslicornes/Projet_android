@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Action à effectuer lorsque le bouton "Rejoindre une partie" est cliqué
                 Toast.makeText(MainActivity.this, "Rejoindre une partie cliqué", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                Intent intent = new Intent(MainActivity.this, Quizz.class);
                 startActivity(intent);
             }
         });
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Lancer LoginActivity lorsque le bouton "Créer une partie" est cliqué
-                Intent intent = new Intent(MainActivity.this, Classement.class);
+                Intent intent = new Intent(MainActivity.this, Quizz.class);
                 startActivity(intent);
             }
         });
