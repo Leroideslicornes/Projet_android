@@ -1,8 +1,12 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -13,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WaitingRoom extends AppCompatActivity {
@@ -22,6 +27,9 @@ public class WaitingRoom extends AppCompatActivity {
     private EditText editTextNumberOfQuestions;
     private Button buttonConfirmNumber;
     private FirebaseFirestore db;
+    private Spinner spinnerQuiz;
+    private ArrayAdapter<String> adapterQuiz;
+    private List<String> quizList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +42,16 @@ public class WaitingRoom extends AppCompatActivity {
         editTextNumberOfQuestions = findViewById(R.id.editTextNumberOfQuestions);
         buttonConfirmNumber = findViewById(R.id.buttonConfirmNumber);
 
+
         // Initialiser Firestore
         db = FirebaseFirestore.getInstance();
+        spinnerQuiz = findViewById(R.id.spinnerQuiz);
+
+        listenNombreJoueursTempsReel();
 
         // Récupérer et afficher le code de la salle
         getRoomCode();
+        setupSpinnerQuiz();
 
         // Action quand on clique sur "Valider"
         buttonConfirmNumber.setOnClickListener(view -> {
@@ -120,6 +133,54 @@ public class WaitingRoom extends AppCompatActivity {
                 } else {
                     textViewRoomCode.setText("Erreur : " + task.getException().getMessage());
                 }
+            }
+        });
+    }
+        private void setupSpinnerQuiz() {
+            adapterQuiz = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, quizList);
+            adapterQuiz.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerQuiz.setAdapter(adapterQuiz);
+
+            db.collection("Quiz").get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            quizList.add(doc.getId()); // Récupère le nom du document
+                        }
+                        adapterQuiz.notifyDataSetChanged(); // Met à jour le menu
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Erreur de chargement : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+
+            spinnerQuiz.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String quizChoisi = quizList.get(position);
+                    Toast.makeText(getApplicationContext(), "Quiz sélectionné : " + quizChoisi, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    // Rien à faire
+                }
+            });
+    }
+
+    private void listenNombreJoueursTempsReel() {
+        DocumentReference partieRef = db.collection("Partie").document("Partie_en_cours");
+
+        partieRef.addSnapshotListener((documentSnapshot, e) -> {
+            if (e != null) {
+                Toast.makeText(this, "Erreur : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                List<String> joueurs = (List<String>) documentSnapshot.get("Partie1_players");
+                int nombreJoueurs = joueurs != null ? joueurs.size() : 0;
+
+                TextView textViewNombreJoueurs = findViewById(R.id.textViewNombreJoueurs);
+                textViewNombreJoueurs.setText("Nombre de joueurs : " + nombreJoueurs);
             }
         });
     }

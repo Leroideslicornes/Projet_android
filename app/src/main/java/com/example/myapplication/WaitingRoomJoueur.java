@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,10 +41,9 @@ public class WaitingRoomJoueur extends AppCompatActivity {
                     if (etat.equals("Partie en cours")) {
                         // La partie a commencé !
                         Toast.makeText(this, "La partie a commencé !", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(WaitingRoomJoueur.this, Quizz.class);
+                        startActivity(intent);
 
-                        // Lance la prochaine activité par exemple :
-                        // Intent intent = new Intent(this, Quizz.class);
-                        // startActivity(intent);
                     }
                 }
             }
