@@ -41,7 +41,7 @@ public class Fragment_Question extends Fragment {
         answer1 = getArguments().getString("ANSWER1", "");
         answer2 = getArguments().getString("ANSWER2", "");
         answer3 = getArguments().getString("ANSWER3", "");
-        answer4 = getArguments().getString("ANSWER4", "");  // Récupérer la 4e réponse
+        answer4 = getArguments().getString("ANSWER4", "");
         correctAnswer = getArguments().getString("CORRECT_ANSWER", "");
     }
 
@@ -55,7 +55,7 @@ public class Fragment_Question extends Fragment {
         binding.answer1.setText(answer1);
         binding.answer2.setText(answer2);
         binding.answer3.setText(answer3);
-        binding.answer4.setText(answer4);  // Afficher la 4e réponse
+        binding.answer4.setText(answer4);
 
         // Ajouter un listener sur les réponses
         binding.radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
