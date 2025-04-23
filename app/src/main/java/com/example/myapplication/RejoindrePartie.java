@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -53,9 +52,13 @@ public class RejoindrePartie extends AppCompatActivity {
                 for (String key : documentSnapshot.getData().keySet()) {
                     if (key.startsWith("Partie_")) {
                         List<Object> partieList = (List<Object>) documentSnapshot.get(key);
-                        if (partieList != null && partieList.size() > 0) {
+                        if (partieList != null && partieList.size() > 1) { // Vérifie bien au moins 2 éléments
                             Object codePartie = partieList.get(0);
-                            if (codePartie != null && codePartie.toString().equals(code)) {
+                            Object etatPartie = partieList.get(1);
+                            if (codePartie != null && etatPartie != null &&
+                                    codePartie.toString().equals(code) &&
+                                    etatPartie.toString().equalsIgnoreCase("Partie en cours")) {
+
                                 codeTrouve = true;
                                 break;
                             }
@@ -64,16 +67,15 @@ public class RejoindrePartie extends AppCompatActivity {
                 }
 
                 if (codeTrouve) {
-                    Toast.makeText(this, "Code trouvé !", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(this, "Code trouvé et partie en cours !", Toast.LENGTH_SHORT).show();
                     // Lance l'activité Quizz avec les informations
-                    Intent intent = new Intent(this, Quizz.class);
-                    intent.putExtra("CODE_PARTIE", code);
+                    Intent intent = new Intent(this, WaitingRoomJoueur.class);
                     intent.putExtra("PSEUDO", pseudo);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(this, "Code invalide, réessaye.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "La partie n'est pas en cours ou code incorrect.", Toast.LENGTH_SHORT).show();
                 }
+
             } else {
                 Toast.makeText(this, "Le document Partie_en_cours n'existe pas.", Toast.LENGTH_SHORT).show();
             }
@@ -82,3 +84,4 @@ public class RejoindrePartie extends AppCompatActivity {
         });
     }
 }
+
