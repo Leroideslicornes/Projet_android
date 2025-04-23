@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Action à effectuer lorsque le bouton "Rejoindre une partie" est cliqué
                 Toast.makeText(MainActivity.this, "Rejoindre une partie cliqué", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, Quizz.class);
+                Intent intent = new Intent(MainActivity.this, RejoindrePartie.class);
                 startActivity(intent);
             }
         });
