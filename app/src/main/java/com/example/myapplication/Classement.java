@@ -17,14 +17,8 @@ public class Classement extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_classement);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        setContentView(R.layout.activity_classement);
 
         // Données des utilisateurs
         List<User> users = new ArrayList<>();
@@ -36,19 +30,20 @@ public class Classement extends AppCompatActivity {
         Collections.sort(users, Comparator.comparingInt(user -> -user.score));
 
         // Mettre à jour les TextView avec les informations de classement
-        TextView rank1 = findViewById(R.id.textView3);
-        TextView rank2 = findViewById(R.id.textView4);
-        TextView rank3 = findViewById(R.id.textView5);
-        TextView name1 = findViewById(R.id.textView6);
-        TextView name2 = findViewById(R.id.textView7);
-        TextView name3 = findViewById(R.id.textView8);
+        TextView rank1 = findViewById(R.id.firstPlaceName);
+        TextView rank2 = findViewById(R.id.secondPlaceName);
+        TextView rank3 = findViewById(R.id.thirdPlaceName);
+        TextView score1 = findViewById(R.id.firstPlaceScore);
+        TextView score2 = findViewById(R.id.secondPlaceScore);
+        TextView score3 = findViewById(R.id.thirdPlaceScore);
 
-        rank1.setText("1");
-        rank2.setText("2");
-        rank3.setText("3");
-        name1.setText(users.get(0).name + " - " + users.get(0).score);
-        name2.setText(users.get(1).name + " - " + users.get(1).score);
-        name3.setText(users.get(2).name + " - " + users.get(2).score);
+        rank1.setText(users.get(0).name);
+        rank2.setText(users.get(1).name);
+        rank3.setText(users.get(2).name);
+        String score = String.valueOf(users.get(0).score) + " points";
+        score1.setText(score);
+        /*score2.setText(users.get(1).score);
+        score3.setText(users.get(2).score);*/
     }
 
     // Classe pour représenter un utilisateur
@@ -60,5 +55,7 @@ public class Classement extends AppCompatActivity {
             this.name = name;
             this.score = score;
         }
+
+
     }
 }
