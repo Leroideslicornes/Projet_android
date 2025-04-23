@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         Button joinGameButton = findViewById(R.id.button_join_game);
         Button createGameButton = findViewById(R.id.button_create_game);
         Button Debug_Pierre = findViewById(R.id.button_debug_Pierre);
+        Button Debug_Alexis = findViewById(R.id.button_debug_Alexis);
 
 
         // Définir les actions à effectuer lors des clics sur les boutons
@@ -53,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Debug_Pierre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Lancer LoginActivity lorsque le bouton "Créer une partie" est cliqué
+                Intent intent = new Intent(MainActivity.this, Classement.class);
+                startActivity(intent);
+            }
+        });
+
+        Debug_Alexis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Lancer LoginActivity lorsque le bouton "Créer une partie" est cliqué
