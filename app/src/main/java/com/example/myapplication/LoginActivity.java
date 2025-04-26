@@ -90,44 +90,43 @@ public class LoginActivity extends AppCompatActivity {
         String roomCode = generateRoomCode(); // Génère un code unique pour la salle
         String status = "en attente"; // Le statut de la salle
 
-        // Référence à Firestore pour la collection Partie et le document Partie_en_cours
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference partiesRef = db.collection("Partie").document("Partie_en_cours");
 
         partiesRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Récupérer le tableau "Partie_1" du document
-                        List<Object> partieList = (List<Object>) documentSnapshot.get("Partie_1");
+                        int partieIndex = 1;
+                        String partieName;
+                        List<Object> partieList;
 
-                        if (partieList != null) {
-                            // Met à jour ou ajoute les valeurs
-                            if (partieList.size() > 0) {
-                                partieList.set(0, roomCode);
-                            } else {
-                                partieList.add(0, roomCode);
+                        // Cherche la première Partie_X qui n'existe pas
+                        while (true) {
+                            partieName = "Partie_" + partieIndex;
+                            partieList = (List<Object>) documentSnapshot.get(partieName);
+                            if (partieList == null) {
+                                break; // Partie libre trouvée
                             }
-
-                            if (partieList.size() > 1) {
-                                partieList.set(1, status);
-                            } else {
-                                partieList.add(1, status);
-                            }
-
-                            // Mettre à jour dans Firestore
-                            partiesRef.update("Partie_1", partieList)
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(this, "Salle mise à jour : " + roomCode, Toast.LENGTH_SHORT).show();
-                                        partiesRef.update("Partie1_players", new ArrayList<String>());
-                                        goToMainWaitingRoom();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Erreur lors de la mise à jour", Toast.LENGTH_SHORT).show();
-                                        Log.e("Firebase", "Erreur mise à jour salle", e);
-                                    });
-                        } else {
-                            Toast.makeText(this, "Le tableau Partie_1 est vide", Toast.LENGTH_SHORT).show();
+                            partieIndex++;
                         }
+
+                        // Créer la nouvelle partie
+                        List<Object> nouvellePartie = new ArrayList<>();
+                        nouvellePartie.add(roomCode); // Position 0 : code de la salle
+                        nouvellePartie.add(status);   // Position 1 : statut de la salle
+
+                        // Mettre à jour dans Firestore
+                        int finalPartieIndex = partieIndex;
+                        partiesRef.update(partieName, nouvellePartie)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(this, "Salle créée : " + roomCode, Toast.LENGTH_SHORT).show();
+                                    partiesRef.update("Partie" + finalPartieIndex + "_players", new ArrayList<String>());
+                                    goToMainWaitingRoom("Partie_" + finalPartieIndex);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Erreur lors de la création", Toast.LENGTH_SHORT).show();
+                                    Log.e("Firebase", "Erreur création salle", e);
+                                });
                     } else {
                         Toast.makeText(this, "Le document Partie_en_cours n'existe pas", Toast.LENGTH_SHORT).show();
                     }
@@ -137,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.e("Firebase", "Erreur de récupération du document", e);
                 });
     }
+
 
 
 
@@ -157,8 +157,9 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void goToMainWaitingRoom() {
+    private void goToMainWaitingRoom(String NumSalle) {
         Intent intent = new Intent(LoginActivity.this, com.example.myapplication.WaitingRoom.class);
+        intent.putExtra("NumSalle", NumSalle);
         startActivity(intent);
         finish();
     }
