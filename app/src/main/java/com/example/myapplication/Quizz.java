@@ -22,6 +22,8 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
     private int correctAnswers = 0;
     private String themeString;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
