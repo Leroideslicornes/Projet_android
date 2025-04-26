@@ -25,8 +25,9 @@ public class WaitingRoomJoueur extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference partieRef = db.collection("Partie").document("Partie_en_cours");
         String pseudo = getIntent().getStringExtra("PSEUDO");
+        String Numsalle = getIntent().getStringExtra("NUM_SALLE");
 
-        ajouterPseudoDansPartie(pseudo);
+        ajouterPseudoDansPartie(pseudo,Numsalle);
 
 // Écoute les changements en temps réel
         partieRef.addSnapshotListener((documentSnapshot, e) -> {
@@ -35,7 +36,7 @@ public class WaitingRoomJoueur extends AppCompatActivity {
                 return;
             }
             if (documentSnapshot != null && documentSnapshot.exists()) {
-                List<Object> partie1 = (List<Object>) documentSnapshot.get("Partie_1");
+                List<Object> partie1 = (List<Object>) documentSnapshot.get(Numsalle);
                 if (partie1 != null && partie1.size() > 1) {
                     String etat = partie1.get(1).toString();
                     if (etat.equals("Partie en cours")) {
@@ -50,17 +51,17 @@ public class WaitingRoomJoueur extends AppCompatActivity {
         });
 
     }
-    private void ajouterPseudoDansPartie(String pseudo) {
+    private void ajouterPseudoDansPartie(String pseudo,String Numsalle) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference partieRef = db.collection("Partie").document("Partie_en_cours");
 
         if (pseudo != null) {
-            textViewPseudo.setText("Bienvenue " + pseudo + " !");
+            textViewPseudo.setText("Bienvenue " + pseudo + " ! dans la " + Numsalle);
         } else {
             textViewPseudo.setText("Bienvenue !");
         }
 
-        partieRef.update("Partie1_players", FieldValue.arrayUnion(pseudo))
+        partieRef.update(Numsalle + "_players", FieldValue.arrayUnion(pseudo))
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Pseudo ajouté à la partie !", Toast.LENGTH_SHORT).show();
                 })

@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                         partiesRef.update(partieName, nouvellePartie)
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(this, "Salle créée : " + roomCode, Toast.LENGTH_SHORT).show();
-                                    partiesRef.update("Partie" + finalPartieIndex + "_players", new ArrayList<String>());
+                                    partiesRef.update("Partie_" + finalPartieIndex + "_players", new ArrayList<String>());
                                     goToMainWaitingRoom("Partie_" + finalPartieIndex);
                                 })
                                 .addOnFailureListener(e -> {
