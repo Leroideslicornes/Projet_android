@@ -31,6 +31,7 @@ public class WaitingRoom extends AppCompatActivity {
     private ArrayAdapter<String> adapterQuiz;
     private List<String> quizList = new ArrayList<>();
     private String NumSalle;
+    private String quizChoisi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class WaitingRoom extends AppCompatActivity {
             if (!numberText.isEmpty()) {
                 try {
                     int numberOfQuestions = Integer.parseInt(numberText);
-                    updateNumberOfQuestions(numberOfQuestions);
+                    updateNumberOfQuestions(numberOfQuestions, quizChoisi);
                 } catch (NumberFormatException e) {
                     Toast.makeText(WaitingRoom.this, "Veuillez entrer un nombre valide", Toast.LENGTH_SHORT).show();
                 }
@@ -73,7 +74,7 @@ public class WaitingRoom extends AppCompatActivity {
     }
 
     // Méthode pour mettre à jour le nombre de questions dans Firestore
-    private void updateNumberOfQuestions(int numberOfQuestions) {
+    private void updateNumberOfQuestions(int numberOfQuestions,String ThemePartie) {
         DocumentReference partiesRef = db.collection("Partie").document("Partie_en_cours");
 
         partiesRef.get()
@@ -84,12 +85,12 @@ public class WaitingRoom extends AppCompatActivity {
                             List<Object> partieList = (List<Object>) partieObj;
 
                             // Sécurise la taille de la liste
-                            while (partieList.size() <= 2) {
+                            while (partieList.size() <= 3) {
                                 partieList.add("");
                             }
-
                             partieList.set(2, numberOfQuestions);
                             partieList.set(1, "Partie en cours");
+                            partieList.set(3, ThemePartie);
 
                             // Mise à jour de Firestore
                             partiesRef.update(NumSalle, partieList)
@@ -159,7 +160,7 @@ public class WaitingRoom extends AppCompatActivity {
             spinnerQuiz.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String quizChoisi = quizList.get(position);
+                    quizChoisi = quizList.get(position);
                     Toast.makeText(getApplicationContext(), "Quiz sélectionné : " + quizChoisi, Toast.LENGTH_SHORT).show();
                 }
 

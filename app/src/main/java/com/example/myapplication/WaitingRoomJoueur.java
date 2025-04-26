@@ -43,6 +43,7 @@ public class WaitingRoomJoueur extends AppCompatActivity {
                         // La partie a commencé !
                         Toast.makeText(this, "La partie a commencé !", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(WaitingRoomJoueur.this, Quizz.class);
+                        intent.putExtra("NunSalle", Numsalle);
                         startActivity(intent);
 
                     }

@@ -7,8 +7,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import com.example.myapplication.databinding.ActivityQuizzBinding;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import android.util.Log;
 
 import java.util.*;
 
@@ -18,6 +20,7 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
     private List<Fragment_Question> questions;
     private int currentQuestionIndex = 0;
     private int correctAnswers = 0;
+    private String themeString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +31,9 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
         questions = new ArrayList<>();
 
         // Appel pour récupérer les questions depuis Firestore
-        addQuestionsFromFirestore("all");
+        String Numsalle = getIntent().getStringExtra("NunSalle");
+        Log.d("FirebaseDebug", "numero salle  : " + Numsalle);
+        recupererThemePartie(Numsalle);
 
         // Bouton Restart (initialement invisible)
         binding.restart.setOnClickListener(v -> {
@@ -44,7 +49,7 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
         questions.clear(); // Réinitialise la liste de questions
         Set<String> seenQuestions = new HashSet<>(); // Pour éviter les doublons
 
-        if (themeName.equalsIgnoreCase("all")) {
+        if (themeName.equalsIgnoreCase("aleatoire")) {
             // Récupère tous les documents (thèmes) de la collection "Quiz"
             db.collection("Quiz")
                     .get()
@@ -163,4 +168,36 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
             startActivity(intent);
         }
     }
+
+    private void recupererThemePartie(String numPartie) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference partieRef = db.collection("Partie").document("Partie_en_cours");
+
+        partieRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                List<Object> partieList = (List<Object>) documentSnapshot.get(numPartie);
+                if (partieList != null && partieList.size() > 3) { // au moins 5 éléments (index 0 à 3)
+                    Object theme = partieList.get(3);
+                    if (theme != null) {
+                        themeString = theme.toString();
+                        Toast.makeText(this, "Thème récupéré : " + themeString, Toast.LENGTH_SHORT).show();
+
+                        // 🔥 Une fois qu'on a récupéré le thème, on peut charger les questions
+                        Log.d("MATTEO", themeString);
+                        addQuestionsFromFirestore(themeString);
+
+                    } else {
+                        Toast.makeText(this, "Thème vide", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(this, "La liste est trop courte ou inexistante", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Le document Partie_en_cours n'existe pas", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Erreur Firebase : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
 }
