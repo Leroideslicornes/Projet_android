@@ -152,7 +152,9 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
     }
 
     @Override
-    public void onAnswerSelected(boolean isCorrect) {
+    public void onAnswerSelected(boolean isCorrect, float timeTakenSeconds) {
+        Log.d("MATTEO", "Temps pour répondre : " + timeTakenSeconds + " secondes");
+
         if (isCorrect) {
             correctAnswers++;
         }
@@ -161,7 +163,6 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
             currentQuestionIndex++;
             showNextQuestion();
         } else {
-            // Aller à l'écran de classement
             Intent intent = new Intent(Quizz.this, Classement.class);
             intent.putExtra("FOUND", Integer.toString(correctAnswers));
             intent.putExtra("NB_QUESTION", Integer.toString(questions.size()));

@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import com.example.myapplication.databinding.FragmentQuestionBinding;
 
-public class Fragment_Question extends Fragment {
+public class
+Fragment_Question extends Fragment {
 
     private FragmentQuestionBinding binding;
     private String question;
@@ -18,6 +19,8 @@ public class Fragment_Question extends Fragment {
     private String answer3;
     private String answer4;  // Ajout du quatrième choix
     private String correctAnswer;
+    private long startTimeMillis;
+
 
     // Méthode pour créer une nouvelle instance avec les 4 réponses
     public static Fragment_Question newInstance(String question, String answer1, String answer2, String answer3, String answer4, String correctAnswer) {
@@ -57,14 +60,22 @@ public class Fragment_Question extends Fragment {
         binding.answer3.setText(answer3);
         binding.answer4.setText(answer4);
 
+        startTimeMillis = System.currentTimeMillis();
+
         // Ajouter un listener sur les réponses
         binding.radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             RadioButton selected = getView().findViewById(checkedId);
             if (selected != null) {
+                // Chrono : calcul du temps pris
+                long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+                float elapsedTimeSeconds = elapsedTimeMillis / 1000f; // En secondes, si tu veux
+
                 // Vérifier si la réponse est correcte
                 boolean isCorrect = correctAnswer.equals(selected.getText().toString());
+
+                // Envoyer le résultat et le temps à l'activité principale
                 if (getActivity() instanceof OnAnswerSelectedListener) {
-                    ((OnAnswerSelectedListener) getActivity()).onAnswerSelected(isCorrect);
+                    ((OnAnswerSelectedListener) getActivity()).onAnswerSelected(isCorrect, elapsedTimeSeconds);
                 }
             }
         });
@@ -74,6 +85,6 @@ public class Fragment_Question extends Fragment {
 
     // Interface pour la communication avec l'activité principale
     public interface OnAnswerSelectedListener {
-        void onAnswerSelected(boolean isCorrect);
+        void onAnswerSelected(boolean isCorrect, float timeTakenSeconds);
     }
 }
