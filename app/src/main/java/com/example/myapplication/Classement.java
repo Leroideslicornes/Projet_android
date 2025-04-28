@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -42,9 +43,14 @@ public class Classement extends AppCompatActivity {
         score2.setText(users.get(1).score + " points");
         score3.setText(users.get(2).score + " points");
 
-        // Gestion du bouton retour
+        // Gestion du bouton retour pour revenir à MainActivity
         Button backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(v -> finish());
+        backButton.setOnClickListener(v -> {
+            // Créer un Intent pour démarrer MainActivity
+            Intent intent = new Intent(Classement.this, MainActivity.class);
+            startActivity(intent);
+            finish();  // Fermer l'activity actuelle
+        });
     }
 
     // Classe pour représenter un utilisateur
