@@ -164,6 +164,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
     private void createPlayerDocument(String numaPortie) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
