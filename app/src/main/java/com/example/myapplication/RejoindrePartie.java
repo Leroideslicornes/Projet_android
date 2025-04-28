@@ -16,7 +16,7 @@ import java.util.List;
 public class RejoindrePartie extends AppCompatActivity {
 
     private EditText editTextCode, editTextPseudo;
-    private Button buttonJoin;
+    private Button buttonJoin, buttonBack; // Ajout du bouton retour
     private FirebaseFirestore db;
 
     @Override
@@ -28,11 +28,19 @@ public class RejoindrePartie extends AppCompatActivity {
         editTextCode = findViewById(R.id.editTextCode);
         editTextPseudo = findViewById(R.id.editTextPseudo);
         buttonJoin = findViewById(R.id.buttonJoin);
+        buttonBack = findViewById(R.id.buttonBack); // Lier le bouton retour
 
         // Initialiser Firestore
         db = FirebaseFirestore.getInstance();
 
         buttonJoin.setOnClickListener(view -> rejoindrePartie());
+
+        // Gérer le clic sur le bouton retour
+        buttonBack.setOnClickListener(view -> {
+            Intent intent = new Intent(RejoindrePartie.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Facultatif : ferme l'activité actuelle pour éviter de revenir dessus
+        });
     }
 
     private void rejoindrePartie() {
@@ -49,7 +57,7 @@ public class RejoindrePartie extends AppCompatActivity {
         partieRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 boolean codeTrouve = false;
-                String partieTrouvee = null; // <-- pour retenir la clé (ex: "Partie_1")
+                String partieTrouvee = null;
 
                 for (String key : documentSnapshot.getData().keySet()) {
                     if (key.startsWith("Partie_")) {
@@ -61,9 +69,8 @@ public class RejoindrePartie extends AppCompatActivity {
                             if (codePartie != null && etatPartie != null &&
                                     codePartie.toString().equals(code) &&
                                     etatPartie.toString().equalsIgnoreCase("en attente")) {
-
                                 codeTrouve = true;
-                                partieTrouvee = key; // <-- on garde la clé trouvée
+                                partieTrouvee = key;
                                 break;
                             }
                         }
@@ -72,10 +79,9 @@ public class RejoindrePartie extends AppCompatActivity {
 
                 if (codeTrouve && partieTrouvee != null) {
                     Toast.makeText(this, "Code trouvé et partie en attente !", Toast.LENGTH_SHORT).show();
-                    // Lance l'activité avec la clé de la partie trouvée
                     Intent intent = new Intent(this, WaitingRoomJoueur.class);
                     intent.putExtra("PSEUDO", pseudo);
-                    intent.putExtra("NUM_SALLE", partieTrouvee); // <-- on envoie la clé (ex: "Partie_1")
+                    intent.putExtra("NUM_SALLE", partieTrouvee);
                     startActivity(intent);
                 } else {
                     Toast.makeText(this, "La partie n'est pas en attente ou code incorrect.", Toast.LENGTH_SHORT).show();
@@ -88,6 +94,4 @@ public class RejoindrePartie extends AppCompatActivity {
             Toast.makeText(this, "Erreur Firebase : " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
-
 }
-
