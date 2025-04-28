@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class WaitingRoom extends AppCompatActivity {
 
@@ -172,8 +173,10 @@ public class WaitingRoom extends AppCompatActivity {
     }
 
     private void listenNombreJoueursTempsReel() {
-        DocumentReference partieRef = db.collection("Partie").document("Partie_en_cours");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference partieRef = db.collection("Partie").document(NumSalle + "_players");
 
+        // Écoute en temps réel du document
         partieRef.addSnapshotListener((documentSnapshot, e) -> {
             if (e != null) {
                 Toast.makeText(this, "Erreur : " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -181,12 +184,17 @@ public class WaitingRoom extends AppCompatActivity {
             }
 
             if (documentSnapshot != null && documentSnapshot.exists()) {
-                List<String> joueurs = (List<String>) documentSnapshot.get("Partie1_players");
+                // Récupérer les champs du document qui sont les pseudos des joueurs
+                Map<String, Object> joueurs = (Map<String, Object>) documentSnapshot.getData();
+
+                // Compter le nombre de joueurs en fonction des clés (les pseudos)
                 int nombreJoueurs = joueurs != null ? joueurs.size() : 0;
 
+                // Afficher le nombre de joueurs dans un TextView
                 TextView textViewNombreJoueurs = findViewById(R.id.textViewNombreJoueurs);
                 textViewNombreJoueurs.setText("Nombre de joueurs : " + nombreJoueurs);
             }
         });
     }
+
 }

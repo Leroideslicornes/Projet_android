@@ -117,10 +117,11 @@ public class LoginActivity extends AppCompatActivity {
 
                         // Mettre à jour dans Firestore
                         int finalPartieIndex = partieIndex;
+                        String finalPartieName = partieName;
                         partiesRef.update(partieName, nouvellePartie)
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(this, "Salle créée : " + roomCode, Toast.LENGTH_SHORT).show();
-                                    partiesRef.update("Partie_" + finalPartieIndex + "_players", new ArrayList<String>());
+                                    createPlayerDocument(finalPartieName);
                                     goToMainWaitingRoom("Partie_" + finalPartieIndex);
                                 })
                                 .addOnFailureListener(e -> {
@@ -163,4 +164,28 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+    private void createPlayerDocument(String numaPortie) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Nom du document : numaportie + "_players"
+        String documentName = numaPortie + "_players";
+
+        // Création de la structure du document avec une liste vide pour les joueurs
+        Map<String, Object> partieData = new HashMap<>();
+
+        // Référence vers le document
+        DocumentReference documentRef = db.collection("Partie").document(documentName);
+
+        // Créer le document
+        documentRef.set(partieData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Document créé avec succès : " + documentName, Toast.LENGTH_SHORT).show();
+                    Log.d("Firebase", "Document créé : " + documentName);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Erreur lors de la création du document", Toast.LENGTH_SHORT).show();
+                    Log.e("Firebase", "Erreur lors de la création du document", e);
+                });
+    }
+
 }

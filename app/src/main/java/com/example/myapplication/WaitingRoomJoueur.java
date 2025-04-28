@@ -9,7 +9,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WaitingRoomJoueur extends AppCompatActivity {
 
@@ -52,9 +54,9 @@ public class WaitingRoomJoueur extends AppCompatActivity {
         });
 
     }
-    private void ajouterPseudoDansPartie(String pseudo,String Numsalle) {
+
+    private void ajouterPseudoDansPartie(String pseudo, String Numsalle) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference partieRef = db.collection("Partie").document("Partie_en_cours");
 
         if (pseudo != null) {
             textViewPseudo.setText("Bienvenue " + pseudo + " ! dans la " + Numsalle);
@@ -62,12 +64,22 @@ public class WaitingRoomJoueur extends AppCompatActivity {
             textViewPseudo.setText("Bienvenue !");
         }
 
-        partieRef.update(Numsalle + "_players", FieldValue.arrayUnion(pseudo))
+        // Référence au document de la salle avec le nom numsalle + "_players"
+        DocumentReference partieRef = db.collection("Partie").document(Numsalle + "_players");
+
+        // Créer une Map pour associer le pseudo au score
+        Map<String, Object> playerScore = new HashMap<>();
+        playerScore.put(pseudo, 0); // Le pseudo comme clé, et le score comme valeur (0 au début)
+
+        // Mise à jour du document en ajoutant le pseudo et le score
+        partieRef.update(playerScore)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Pseudo ajouté à la partie !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Pseudo et score ajoutés à la salle !", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Erreur d'ajout : " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
+
 }
