@@ -44,7 +44,7 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
         });
     }
 
-    private void addQuestionsFromFirestore(String themeName) {
+    private void addQuestionsFromFirestore(String themeName, int nombreDeQuestions) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         questions.clear(); // Réinitialise la liste de questions
         Set<String> seenQuestions = new HashSet<>(); // Pour éviter les doublons
@@ -83,6 +83,10 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
                         }
 
                         if (!questions.isEmpty()) {
+                            // Limite le nombre de questions à celui défini
+                            if (questions.size() > nombreDeQuestions) {
+                                questions = questions.subList(0, nombreDeQuestions);
+                            }
                             Collections.shuffle(questions);
                             showNextQuestion();
                         } else {
@@ -127,6 +131,10 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
                             }
 
                             if (!questions.isEmpty()) {
+                                // Limite le nombre de questions à celui défini
+                                if (questions.size() > nombreDeQuestions) {
+                                    questions = questions.subList(0, nombreDeQuestions);
+                                }
                                 Collections.shuffle(questions);
                                 showNextQuestion();
                             } else {
@@ -142,6 +150,7 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
         }
     }
 
+
     private void showNextQuestion() {
         if (currentQuestionIndex < questions.size()) {
             Fragment_Question q = questions.get(currentQuestionIndex);
@@ -153,8 +162,6 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
 
     @Override
     public void onAnswerSelected(boolean isCorrect, float timeTakenSeconds) {
-        Log.d("MATTEO", "Temps pour répondre : " + timeTakenSeconds + " secondes");
-
         if (isCorrect) {
             correctAnswers++;
         }
@@ -166,6 +173,7 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
             Intent intent = new Intent(Quizz.this, Classement.class);
             intent.putExtra("FOUND", Integer.toString(correctAnswers));
             intent.putExtra("NB_QUESTION", Integer.toString(questions.size()));
+            intent.putExtra("elapsedTime", timeTakenSeconds);
             startActivity(intent);
         }
     }
@@ -179,16 +187,28 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
                 List<Object> partieList = (List<Object>) documentSnapshot.get(numPartie);
                 if (partieList != null && partieList.size() > 3) { // au moins 5 éléments (index 0 à 3)
                     Object theme = partieList.get(3);
-                    if (theme != null) {
-                        themeString = theme.toString();
-                        Toast.makeText(this, "Thème récupéré : " + themeString, Toast.LENGTH_SHORT).show();
+                    Object nbquestion = partieList.get(2);
 
-                        // 🔥 Une fois qu'on a récupéré le thème, on peut charger les questions
-                        Log.d("MATTEO", themeString);
-                        addQuestionsFromFirestore(themeString);
+                    if (theme != null && nbquestion != null) {
+                        // Récupérer le thème
+                        themeString = theme.toString();
+
+                        // Convertir nbquestion en entier
+                        int nbQuestionsInt = 0;
+                        try {
+                            nbQuestionsInt = Integer.parseInt(nbquestion.toString());
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(this, "Erreur dans la conversion du nombre de questions", Toast.LENGTH_SHORT).show();
+                        }
+
+                        // Affichage du thème et du nombre de questions récupérés
+                        Toast.makeText(this, "Thème récupéré : " + themeString + "\nNombre de questions : " + nbQuestionsInt, Toast.LENGTH_SHORT).show();
+
+                        // Appeler la méthode pour récupérer les questions
+                        addQuestionsFromFirestore(themeString, nbQuestionsInt);
 
                     } else {
-                        Toast.makeText(this, "Thème vide", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Thème ou nombre de questions vide", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(this, "La liste est trop courte ou inexistante", Toast.LENGTH_SHORT).show();
@@ -200,5 +220,6 @@ public class Quizz extends AppCompatActivity implements Fragment_Question.OnAnsw
             Toast.makeText(this, "Erreur Firebase : " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
 
 }

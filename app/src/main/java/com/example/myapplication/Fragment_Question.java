@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ Fragment_Question extends Fragment {
     private String answer4;  // Ajout du quatrième choix
     private String correctAnswer;
     private long startTimeMillis;
+    private String Score;
 
 
     // Méthode pour créer une nouvelle instance avec les 4 réponses
@@ -76,6 +78,7 @@ Fragment_Question extends Fragment {
                 // Envoyer le résultat et le temps à l'activité principale
                 if (getActivity() instanceof OnAnswerSelectedListener) {
                     ((OnAnswerSelectedListener) getActivity()).onAnswerSelected(isCorrect, elapsedTimeSeconds);
+                    Log.d("TAG", String.valueOf(elapsedTimeSeconds));
                 }
             }
         });
