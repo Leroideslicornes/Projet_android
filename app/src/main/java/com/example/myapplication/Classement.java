@@ -12,6 +12,8 @@ import java.util.List;
 
 public class Classement extends AppCompatActivity {
 
+    private Button  backButton; // Ajout du bouton retour
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +46,7 @@ public class Classement extends AppCompatActivity {
         score3.setText(users.get(2).score + " points");
 
         // Gestion du bouton retour pour revenir à MainActivity
-        Button backButton = findViewById(R.id.backButton);
+        backButton = findViewById(R.id.backButton); // Lier le bouton retour
         backButton.setOnClickListener(v -> {
             // Créer un Intent pour démarrer MainActivity
             Intent intent = new Intent(Classement.this, MainActivity.class);
