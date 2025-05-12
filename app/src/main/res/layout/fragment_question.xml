@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="match_parent"
               android:orientation="vertical"
               android:padding="24dp"
               android:background="@drawable/fond_accueil"
@@ -19,12 +19,23 @@
             android:gravity="center"
             android:background="#B3FFFFFF" />
 
+    <!-- Chronomètre -->
+    <TextView
+            android:id="@+id/timerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Temps : 0.00 s"
+            android:textSize="18sp"
+            android:textColor="#FF0000"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"/>
+
     <RadioGroup
             android:id="@+id/radio_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="8dp">
 
         <RadioButton
                 android:id="@+id/answer1"
@@ -75,4 +86,25 @@
                 android:layout_marginBottom="8dp" />
 
     </RadioGroup>
+
+    <!-- Résultat et points -->
+    <TextView
+            android:id="@+id/resultMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Résultat :"
+            android:textSize="18sp"
+            android:textColor="#00FF00"
+            android:layout_marginTop="24dp"
+            android:gravity="center"/>
+
+    <TextView
+            android:id="@+id/scoreMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Votre score : 0"
+            android:textSize="18sp"
+            android:textColor="#FF0000"
+            android:layout_marginTop="8dp"
+            android:gravity="center"/>
 </LinearLayout>
